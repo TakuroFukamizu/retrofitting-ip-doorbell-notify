@@ -8,6 +8,7 @@ import json
 import time
 from datetime import datetime
 from model.LineNotifyRequest import *
+from model.LocalChilds import LocalChildBellClient
 
 import RPi.GPIO as GPIO
 
@@ -59,10 +60,15 @@ if __name__ == "__main__":
         for var in range(0, 5):
             value = GPIO.input(PIN_SWITCH)
             time.sleep(0.2)
-            if value == 0 : knocked = True
+            if value == 0:
+                knocked = True
 
-        if knocked == True :
+        if knocked:
             print 'knock. knock.'
+
+            # send signal to child bells
+            childs = LocalChildBellClient()
+            childs.ring()
 
             try:
                 # send Line notify
@@ -75,9 +81,8 @@ if __name__ == "__main__":
 
             # ring door bell
             GPIO.output(PIN_BELL, True)
-            time.sleep(1.5) 
+            time.sleep(1.5)
             GPIO.output(PIN_BELL, False)
-
 
             time.sleep(3.5) # long wait
 
