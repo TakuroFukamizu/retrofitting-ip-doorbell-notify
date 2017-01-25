@@ -1,13 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""
+LINE Notify support models
+"""
+
 import urllib2
 import urllib
 
+"""
+LINE Notify send request
+"""
 class LineNotifyRequest:
     __url = 'https://notify-api.line.me/api/notify'
-    __apiToken = None;
-    __message = None;
+    __apiToken = None
+    __message = None
 
     def setToken(self, token):
         self.__apiToken = token
