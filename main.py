@@ -12,9 +12,15 @@ from model.LocalChilds import LocalChildBellClient
 
 import RPi.GPIO as GPIO
 
+import bottle
+
+# ----------
+
 PIN_SWITCH  = 4  #GPIO  4 : PIN  7
 PIN_BELL    = 17 #GPIO 17 : PIN 11
 PIN_RUNNING = 26 #GPIO 26 : PIN 37
+
+# ----------
 
 def load_properties():
     basedir = os.path.dirname(os.path.abspath(__file__))
@@ -28,13 +34,33 @@ def create_knock_message():
     attime = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
     return msg_template.format(time=attime)
 
+def ring_bell():
+    GPIO.output(PIN_BELL, True)
+    time.sleep(1.5)
+    GPIO.output(PIN_BELL, False)
+    
 def goodbye():
     # clean up GPIO
     GPIO.output(PIN_BELL   , False)
     GPIO.output(PIN_RUNNING, False)
     GPIO.cleanup()
 
+# ----------
+
+app = application = bottle.default_app()
+
+@bottle.route('/_api/bell/main/test', method='GET')
+def test_main_bell():
+    ring_bell()
+    bottle.response.headers['Content-Type'] = 'application/json'
+    return json.dumps({ 'status': True })
+
+# ----------
+
 if __name__ == "__main__":
+    # start api server
+    bottle.run(host = '0.0.0.0', port=80)
+
     atexit.register(goodbye) # Exit handler
 
     # setup GPIO
@@ -80,9 +106,7 @@ if __name__ == "__main__":
                 print 'Unexpected error on Line Notify:', sys.exc_info()[0]
 
             # ring door bell
-            GPIO.output(PIN_BELL, True)
-            time.sleep(1.5)
-            GPIO.output(PIN_BELL, False)
+            ring_bell()
 
             time.sleep(3.5) # long wait
 

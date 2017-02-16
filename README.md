@@ -7,7 +7,7 @@
 ### install middleware
 
 ```
-$ sudo apt-get install python-rpi.gpio
+$ sudo apt-get install python-rpi.gpio python-bottle
 ```
 
 ### make configuration files
@@ -35,4 +35,12 @@ python /home/pi/src/door-line-notify-python/main.py &
 
 ```
 $ sudo python main.py
+```
+
+## test
+
+ring bell throw REST API.
+
+```
+$ curl -v -X GET http://YOUR_RASPI_HOSTNAME/_api/bell/main/test
 ```

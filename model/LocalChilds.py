@@ -7,10 +7,11 @@ Local Child Bells supporter class
 
 from socket import *
 
+PORT = 5008
 MSG_RECV_RING = "RECV RING"
 
 class LocalChildBellClient:
-    __port = 5008
+    __port = PORT
     __host = ''
     __addres = "255.255.255.255"
 
