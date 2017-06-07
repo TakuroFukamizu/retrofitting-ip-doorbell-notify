@@ -38,7 +38,7 @@ def ring_bell():
     GPIO.output(PIN_BELL, True)
     time.sleep(1.5)
     GPIO.output(PIN_BELL, False)
-    
+
 def goodbye():
     # clean up GPIO
     GPIO.output(PIN_BELL   , False)
@@ -54,6 +54,8 @@ def test_main_bell():
     ring_bell()
     bottle.response.headers['Content-Type'] = 'application/json'
     return json.dumps({ 'status': True })
+
+# @bottle.route('/_api/notify/line/test', method='GET')
 
 # ----------
 
@@ -77,8 +79,13 @@ if __name__ == "__main__":
     # read private config
     properties = load_properties()
     api_token = properties['line_api_token']
+    mqtt_url = properties['mqtt']['address']
+    mqtt_user = properties['mqtt']['user']
+    mqtt_password = properties['mqtt']['password']
 
     GPIO.output(PIN_RUNNING, True)
+
+    childs = LocalChildBellClient(mqtt_url, mqtt_user, mqtt_password)
 
     while True:
         # fetch swtich status -- 5 times/1 sec
@@ -93,7 +100,6 @@ if __name__ == "__main__":
             print 'knock. knock.'
 
             # send signal to child bells
-            childs = LocalChildBellClient()
             childs.ring()
 
             try:
